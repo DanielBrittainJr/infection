@@ -47,6 +47,9 @@ function movePeople() {
 					const speed = 0.1;
 					people[i].x += Math.cos(angle) * speed;
 					people[i].y += Math.sin(angle) * speed;
+
+					//infect logic
+					infectWithPeople(people[i].x, people[i].y);
 				}
 
 				
@@ -54,6 +57,21 @@ function movePeople() {
 
 		}
 	}
+}
+
+function infectWithPeople(x, y) {
+
+	for(let i = 0; i < people.length; i++) {
+		//each person in people
+		const { x: personX, y: personY, width, height } = people[i];
+
+		//if the infected touches a person, they become infected
+		if(x >= personX && x <= personX + width && y >= personY && y <= personY + height) {
+			people[i].infected = true;
+		}
+	}
+
+
 }
 
 function borderCollision(person) {
