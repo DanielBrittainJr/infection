@@ -30,21 +30,24 @@ function movePeople() {
 	for(let i = 0; i < people.length; i++) {
 		const {x, y, infected} = people[i];
 
-		if(!infected) {
-		const randomX = Math.random() * 2 - 1;
-		const randomY = Math.random() * 2 - 1;
+		if(infected === false) {
+			const randomX = Math.random() * 2 - 1;
+			const randomY = Math.random() * 2 - 1;
 
-		people[i].x += randomX;
-		people[i].y += randomY;
+			people[i].x += randomX;
+			people[i].y += randomY;
 
-		borderCollision(people[i]);
+			borderCollision(people[i]);
 		} else { 
 			//chase logic
+			//get list of people
 			for (let j = 0; j < people.length; j++) {
-				//if infected, chase the people
-				if(!people[j].infected) {
-					const angle = Math.atan2(people[j].y - y, people[j].x - x);
+				//if not infected, we will get their angle, and the infected will chase
+				if(people[j].infected === false) {
+					//find angle 
+					const angle = Math.atan2(people[j].y - people[i].y, people[j].x - people[i].x);
 					const speed = 0.1;
+					//update infected location to move toward people at correct angle.
 					people[i].x += Math.cos(angle) * speed;
 					people[i].y += Math.sin(angle) * speed;
 
