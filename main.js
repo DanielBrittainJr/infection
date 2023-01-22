@@ -1,17 +1,14 @@
 const canvas = document.getElementById("canvas");
-canvas.width = 300;
-canvas.height = 300;
+canvas.width = 600;
+canvas.height = 600;
 const canvasContext = canvas.getContext("2d");
-
-canvasContext.fillStyle = "green";
-canvasContext.fillRect(10, 10, 150, 100);
 
 let canvasXMin = canvas.width - canvas.width;
 let canvasYMin = canvas.height - canvas.height;
 
 const people = [
-	{x: 10, y: 20, width:30, height: 40, color: 'blue'},
-	{x: 50, y: 60, width:30, height: 40, color: 'blue'}
+	{x: 10, y: 20, width:30, height: 40, color: 'blue', infected: false},
+	{x: 50, y: 60, width:30, height: 40, color: 'blue', infected: false}
 ];
 
 function drawPeople() {
@@ -19,9 +16,10 @@ function drawPeople() {
 	canvasContext.clearRect(0,0, canvas.width, canvas.height);
 
 	for(let i = 0; i < people.length; i++) {
-		const { x, y, width, height, color} = people[i];
+		const { x, y, width, height, color, infected} = people[i];
 
-		canvasContext.fillStyle = color;
+		//change color if infected
+		canvasContext.fillStyle = infected ? 'green' : color;
 		canvasContext.fillRect(x, y, width, height);
 	}
 }
@@ -69,11 +67,14 @@ function handleClick(event) {
 	
 	if(canFire) {
 		for(let i = 0; i < bullets.length; i++) {
-			bullets[i].x = event.clientX;
-			bullets[i].y = event.clientY;
+			// we need to use offsetX instead of clientX because event uses the view port coordinates instead of the canvas coordinates
+			// we centered the canvas, so the view port and canvas coordinates no longer match
+			bullets[i].x = event.offsetX;
+			bullets[i].y = event.offsetY;
 		}
 		canFire = false;
 		hasFired = true;
+		console.log('has fired');
 	}
 }
 
@@ -94,6 +95,23 @@ function moveBullets() {
 	for(let i = 0; i < bullets.length; i++) {
 		bullets[i].x += bullets[i].directX;
 		bullets[i].y += bullets[i].directY;
+
+		//if bullet hits person, we infect them
+		bulletInfect(bullets[i].x, bullets[i].y);
+
+	}
+}
+
+function bulletInfect(x, y) {
+
+	for(let i = 0; i < people.length; i++) {
+		//each person in people
+		const { x: personX, y: personY, width, height } = people[i];
+
+		//if the bullet hits a person, they become infected
+		if(x >= personX && x <= personX + width && y >= personY && y <= personY + height) {
+			people[i].infected = true;
+		}
 	}
 }
 
