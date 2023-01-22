@@ -6,11 +6,21 @@ const canvasContext = canvas.getContext("2d");
 let canvasXMin = canvas.width - canvas.width;
 let canvasYMin = canvas.height - canvas.height;
 
-const people = [
-	{x: 10, y: 20, width:30, height: 40, color: 'blue', infected: false},
-	{x: 50, y: 60, width:30, height: 40, color: 'blue', infected: false},
-	{x: 90, y: 100, width:30, height: 40, color: 'blue', infected: false}
-];
+const numberOfPeople = 20;
+const people = [];
+
+for(let i = 0; i < numberOfPeople; i++) {
+	const person = {
+		x: Math.random() * canvas.width,
+		y: Math.random() * canvas.height,
+		width: 30,
+		height: 40,
+		color: "blue",
+		infected: false
+	};
+
+	people.push(person);
+}
 
 function drawPeople() {
 
@@ -28,9 +38,8 @@ function drawPeople() {
 function movePeople() {
 	
 	for(let i = 0; i < people.length; i++) {
-		const {x, y, infected} = people[i];
 
-		if(infected === false) {
+		if(people[i].infected === false) {
 			const randomX = Math.random() * 2 - 1;
 			const randomY = Math.random() * 2 - 1;
 
@@ -38,29 +47,54 @@ function movePeople() {
 			people[i].y += randomY;
 
 			borderCollision(people[i]);
-		} else { 
-			//chase logic
+
+		} else if(people[i].infected) { 
+
+			//first we do the logic to get the closest person to curret infected,
+			//then we implement chase logic
+			
+			//set to middle of canvas to initialize
+			let closestPerson = { x: canvas.width / 2, y: canvas.height / 2 };
+			let closestDistance = Infinity;
+
 			//get list of people
 			for (let j = 0; j < people.length; j++) {
-				//if not infected, we will get their angle, and the infected will chase
+				//if not infected, we will get their distance
 				if(people[j].infected === false) {
-					//find angle 
-					const angle = Math.atan2(people[j].y - people[i].y, people[j].x - people[i].x);
-					const speed = 0.1;
-					//update infected location to move toward people at correct angle.
-					people[i].x += Math.cos(angle) * speed;
-					people[i].y += Math.sin(angle) * speed;
 
-					//infect logic
-					infectWithPeople(people[i].x, people[i].y);
+					//find distance, we use the distance formula  √((x2 - x1)² + (y2 - y1)²)
+					const distance = Math.sqrt(
+						Math.pow(people[j].x - people[i].x, 2) +
+						Math.pow(people[j].y - people[i].y, 2)
+					);
+
+					//here we check if this person is closest based on distance,
+					//if so we make them the new closest person
+					if(distance < closestDistance) {
+						closestDistance = distance;
+						closestPerson = people[j];
+					}
 				}
-
-				
 			}
+
+			//find angle, using atan2 function. Returns angle in radians
+			const angle = Math.atan2(closestPerson.y - people[i].y, closestPerson.x - people[i].x);
+
+			//update infected location to move toward people at correct angle.
+			// our speed is how fast we move in that angle
+			// we set infected location to these two things
+			const speed = 0.4;
+			people[i].x += Math.cos(angle) * speed;
+			people[i].y += Math.sin(angle) * speed;
+
+			//infect logic
+			infectWithPeople(people[i].x, people[i].y);
+				
 
 		}
 	}
 }
+
 
 function infectWithPeople(x, y) {
 
