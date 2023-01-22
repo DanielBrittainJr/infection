@@ -8,7 +8,8 @@ let canvasYMin = canvas.height - canvas.height;
 
 const people = [
 	{x: 10, y: 20, width:30, height: 40, color: 'blue', infected: false},
-	{x: 50, y: 60, width:30, height: 40, color: 'blue', infected: false}
+	{x: 50, y: 60, width:30, height: 40, color: 'blue', infected: false},
+	{x: 90, y: 100, width:30, height: 40, color: 'blue', infected: false}
 ];
 
 function drawPeople() {
@@ -27,29 +28,54 @@ function drawPeople() {
 function movePeople() {
 	
 	for(let i = 0; i < people.length; i++) {
-		const {x, y, width, height, color} = people[i];
+		const {x, y, infected} = people[i];
 
+		if(!infected) {
 		const randomX = Math.random() * 2 - 1;
 		const randomY = Math.random() * 2 - 1;
 
 		people[i].x += randomX;
 		people[i].y += randomY;
 
-		if(people[i].x < canvasXMin) {
-			people[i].x = canvas.width;
+		borderCollision(people[i]);
+		} else { 
+			//chase logic
+			for (let j = 0; j < people.length; j++) {
+				//if infected, chase the people
+				if(!people[j].infected) {
+					const angle = Math.atan2(people[j].y - y, people[j].x - x);
+					const speed = 0.1;
+					people[i].x += Math.cos(angle) * speed;
+					people[i].y += Math.sin(angle) * speed;
+				}
 
-		} else if(people[i].x > canvas.width) {
-			people[i].x = canvasXMin;
-		}
+				
+			}
 
-		if(people[i].y < canvasYMin) {
-			people[i].y = canvas.height;
-
-		} else if(people[i].y > canvas.height) {
-			people[i].y = 0;
 		}
 	}
 }
+
+function borderCollision(person) {
+
+
+	//if person hits canvas border they re enter at the opposite end
+	if(person.x < canvasXMin) {
+		person.x = canvas.width;
+
+	} else if(person.x > canvas.width) {
+		person.x = canvasXMin;
+	}
+
+	if(person.y < canvasYMin) {
+		person.y = canvas.height;
+
+	} else if(person.y > canvas.height) {
+		person.y = 0;
+	}
+}
+
+
 
 //shoot infection
 let bullets = [
@@ -97,12 +123,12 @@ function moveBullets() {
 		bullets[i].y += bullets[i].directY;
 
 		//if bullet hits person, we infect them
-		bulletInfect(bullets[i].x, bullets[i].y);
+		infectWithBullets(bullets[i].x, bullets[i].y);
 
 	}
 }
 
-function bulletInfect(x, y) {
+function infectWithBullets(x, y) {
 
 	for(let i = 0; i < people.length; i++) {
 		//each person in people
@@ -117,6 +143,7 @@ function bulletInfect(x, y) {
 
 
 function gameLoop() {
+
 	movePeople();
 	drawPeople();
 
