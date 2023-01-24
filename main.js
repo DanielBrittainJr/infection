@@ -16,7 +16,8 @@ for(let i = 0; i < numberOfPeople; i++) {
 		width: 30,
 		height: 40,
 		color: "blue",
-		infected: false
+		infected: false,
+		dead: false
 	};
 
 	people.push(person);
@@ -27,11 +28,20 @@ function drawPeople() {
 	canvasContext.clearRect(0,0, canvas.width, canvas.height);
 
 	for(let i = 0; i < people.length; i++) {
-		const { x, y, width, height, color, infected} = people[i];
+		const { x, y, width, height, infected, dead} = people[i];
 
 		//change color if infected
-		canvasContext.fillStyle = infected ? 'green' : color;
-		canvasContext.fillRect(x, y, width, height);
+		if(infected && !dead) {
+			canvasContext.fillStyle = "green"
+			canvasContext.fillRect(x, y, width, height);
+		} else if (infected && dead) {
+			canvasContext.fillStyle = "red"
+			canvasContext.fillRect(x, y, width, height);
+		} else {
+			canvasContext.fillStyle = "blue"
+			canvasContext.fillRect(x, y, width, height);
+
+		}
 	}
 }
 
@@ -43,12 +53,13 @@ function movePeople() {
 			const randomX = Math.random() * 2 - 1;
 			const randomY = Math.random() * 2 - 1;
 
+			//set random position on canvas
 			people[i].x += randomX;
 			people[i].y += randomY;
 
 			borderCollision(people[i]);
 
-		} else if(people[i].infected) { 
+		} else if(people[i].infected && !people[i].dead) { 
 
 			//first we do the logic to get the closest person to curret infected,
 			//then we implement chase logic
@@ -91,6 +102,9 @@ function movePeople() {
 			infectWithPeople(people[i].x, people[i].y);
 				
 
+		} else if (people[i].infected && people[i].dead) {
+			people[i].x = people[i].x
+			people[i].y += people[i].y;
 		}
 	}
 }
@@ -105,6 +119,10 @@ function infectWithPeople(x, y) {
 		//if the infected touches a person, they become infected
 		if(x >= personX && x <= personX + width && y >= personY && y <= personY + height) {
 			people[i].infected = true;
+			setTimeout(() => {
+				people[i].dead = true;
+				
+			}, 5000);
 		}
 	}
 
