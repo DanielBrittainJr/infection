@@ -198,6 +198,7 @@ function moveBullets() {
 		//if bullet hits person, we infect them
 		infectWithBullets(bullets[i].x, bullets[i].y);
 
+
 	}
 }
 
@@ -211,8 +212,38 @@ function infectWithBullets(x, y) {
 		if(x >= personX && x <= personX + width && y >= personY && y <= personY + height) {
 			people[i].infected = true;
 		}
+
 	}
 }
+
+let gameWon = false;
+let gameLost = false;
+
+function winGame() {
+
+	let numberOfInfected = 0;
+	let numberOfDead = 0;
+
+	for (let i = 0; i < people.length; i++) {
+		const person = people[i];
+
+		if (person.infected === true) {
+			numberOfInfected++
+		}
+		if (person.dead === true) {
+			numberOfDead++
+		}
+	}
+
+	if(numberOfInfected === numberOfPeople) {
+		gameWon = true;
+	}
+
+	if(numberOfDead > 0 && numberOfDead === numberOfInfected) {
+		gameLost = true;
+	}
+}
+
 
 
 function gameLoop() {
@@ -226,6 +257,20 @@ function gameLoop() {
 		drawBullets();
 		moveBullets();
 	}
+
+	winGame();
+
+	if (gameLost) {
+		canvasContext.fillStyle = "red";
+		canvasContext.font = "30px Arial";
+		canvasContext.fillText("You Lost!", canvas.width / 2, canvas.height / 2);
+	}
+	if (gameWon) {
+		canvasContext.fillStyle = "green";
+		canvasContext.font = "30px Arial";
+		canvasContext.fillText("You Won!", canvas.width / 2, canvas.height / 2);
+	}
+	
 
 	requestAnimationFrame(gameLoop);
 }

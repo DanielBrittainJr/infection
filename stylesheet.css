@@ -1,6 +1,18 @@
+#header {
+    white-space: pre;
+    text-align: center;
+}
 
 #canvas {
 	display: block;
 	margin: 0 auto;
 	border: 3px solid black;
+}
+
+body {
+  background-color: white;
+}
+
+p {
+	text-align: center;
 }
