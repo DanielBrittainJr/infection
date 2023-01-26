@@ -259,12 +259,12 @@ function gameLoop() {
 	if (gameLost) {
 		canvasContext.fillStyle = "red";
 		canvasContext.font = "30px Arial";
-		canvasContext.fillText("You Lost!", canvas.width / 2, canvas.height / 2);
+		canvasContext.fillText("You Lost!", canvas.width / 2.5, canvas.height / 2);
 	}
 	if (gameWon) {
 		canvasContext.fillStyle = "green";
 		canvasContext.font = "30px Arial";
-		canvasContext.fillText("You Won!", canvas.width / 2, canvas.height / 2);
+		canvasContext.fillText("You Won!", canvas.width / 2.5, canvas.height / 2);
 	}
 	
 
