@@ -125,8 +125,6 @@ function infectWithPeople(x, y) {
 			}, 5000);
 		}
 	}
-
-
 }
 
 function borderCollision(person) {
@@ -237,9 +235,7 @@ function winGame() {
 
 	if(numberOfInfected === numberOfPeople) {
 		gameWon = true;
-	}
-
-	if(numberOfDead > 0 && numberOfDead === numberOfInfected) {
+	}else if(numberOfDead > 0 && numberOfDead === numberOfInfected) {
 		gameLost = true;
 	}
 }
