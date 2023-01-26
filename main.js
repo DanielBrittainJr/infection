@@ -245,8 +245,8 @@ function winGame() {
 }
 
 
-
 function gameLoop() {
+
 
 	movePeople();
 	drawPeople();
